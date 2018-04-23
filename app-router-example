@@ -1,0 +1,216 @@
+(function () {
+    'use strict';
+
+    angular
+        .module('app')
+        .config(appRouter);
+
+    appRouter.$inject = ['$stateProvider', '$urlRouterProvider'];
+    function appRouter($stateProvider, $urlRouterProvider) {
+
+        $urlRouterProvider.otherwise('/home');
+        $urlRouterProvider.when('', '/home');
+
+        $stateProvider
+            .state('init', {
+                abstract: true,
+                url: '',
+                templateUrl: STATIC_ROOT + 'navigation/navigation.view.html',
+                controller: 'InitController',
+                resolve: {
+                    // Get Token
+                    Token: ['AuthService', '$rootScope', function(AuthService, $rootScope) {
+                        if (AuthService.isAuth()){
+                            AuthService.SetTokenRefreshTimer();
+                            return AuthService.GetToken();
+                        }
+                        return null;
+
+                    }],
+                    User: ['Token', 'UserService', function(Token, UserService) {
+                        if (Token){
+                            return UserService.GetProfile();
+                        }
+
+                        return null;
+                    }]
+                }
+
+            })
+
+
+            .state('landing', {
+                url: '/landing?{location}',
+                parent: 'init',
+                controller: 'LandingController',
+                templateUrl: STATIC_ROOT + 'landing/landing.view.html',
+                params: {'location': null}
+            })
+
+
+            .state('about',{
+                url: '/about',
+                controller: 'AboutController',
+                templateUrl: STATIC_ROOT + 'static_pages/about.view.html',
+                parent: 'init'
+            })
+
+            .state('contactus',{
+                url: '/contact',
+                controller: 'ContactUsController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'static_pages/contactus.view.html',
+                parent: 'init'
+            })
+
+            .state('balance',{
+                url: '/cabinet/balance',
+                controller: 'BalanceController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'balance/balance.view.html',
+                parent: 'init'
+            })
+
+            .state('profile',{
+                url: '/cabinet/profile',
+                controller: 'ProfileController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'profile/profile.view.html',
+                parent: 'init'
+            })
+
+            .state('user',{
+                url: '/user/:user_id',
+                parent: 'init',
+                controller: 'UserController',
+                templateUrl: PATH_ROOT + 'user/user.view.html'
+            })
+
+            .state('home',{
+                url: '/home',
+                controller: 'HomeController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'home/home.view.html',
+                parent: 'init'
+            })
+
+            .state('referrals',{
+                url: '/referrals',
+                controller: 'ReferralMyController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'referral/referral.view.html',
+                parent: 'init'
+            })
+
+            .state('referralsMy',{
+                url: '/referrals/my',
+                controller: 'ReferralMyController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'referral/referral.view.html',
+                parent: 'init'
+            })
+
+            .state('referralsBought',{
+                url: '/referrals/bought',
+                controller: 'ReferralBoughtController',
+                controllerAs: 'vm',
+                templateUrl: STATIC_ROOT + 'referral/referral_bought.view.html',
+                parent: 'init'
+            })
+
+            .state('login',{
+                url: '/login',
+                controller: 'LoginController',
+                templateUrl: STATIC_ROOT + 'login/login.view.html',
+                controllerAs: 'vm',
+                parent: 'init'
+            })
+
+            .state('registration',{
+                url: '/registration',
+                controller: 'RegistrationController',
+                templateUrl: STATIC_ROOT + 'registration/registration.view.html',
+                controllerAs: 'vm',
+                parent: 'init'
+            })
+
+            .state('password-change',{
+                url: '/password/change',
+                controller: 'PasswordChangeController',
+                templateUrl: STATIC_ROOT + 'password_change/password_change.view.html',
+                controllerAs: 'vm',
+                parent: 'init'
+            })
+
+            .state('password-reset',{
+                url: '/password/reset',
+                controller: 'PasswordResetController',
+                templateUrl: PATH_ROOT + 'password_reset/password_reset.view.html',
+                controllerAs: 'vm',
+                parent: 'init'
+            })
+
+            .state('password-reset-confirm',{
+                url: '/password/reset/confirm/:uid/:token',
+                controller: 'PasswordResetConfirmController',
+                templateUrl: PATH_ROOT + 'password_reset/password_reset_confirm.view.html',
+                controllerAs: 'vm'
+            })
+
+
+            .state('connections',{
+                url: '/connections/',
+                controller: 'ConnectionsController',
+                templateUrl: STATIC_ROOT + 'connections/connections.view.html',
+                controllerAs: 'vm',
+                parent: 'init',
+                params: {'user_id': null}
+            })
+
+            .state('connections.requests',{
+                url: '/connections/requests/',
+                controller: 'ConnectionsRequestsController',
+                templateUrl: STATIC_ROOT + 'connections/connections_requests.view.html',
+                controllerAs: 'vm',
+                parent: 'init'
+            })
+
+            .state('connections.followers',{
+                url: '/connections/followers/',
+                controller: 'ConnectionsFollowersController',
+                templateUrl: STATIC_ROOT + 'connections/followers.view.html',
+                controllerAs: 'vm',
+                parent: 'init',
+                params: {'user_id': null}
+            })
+
+            .state('connections.following',{
+                url: '/connections/following/',
+                controller: 'ConnectionsFollowingController',
+                templateUrl: STATIC_ROOT + 'connections/following.view.html',
+                controllerAs: 'vm',
+                parent: 'init',
+                params: {'user_id': null}
+            })
+
+            .state('chat',{
+                    url: '/messages/',
+                    controller: 'ChatDialoguesListController',
+                    templateUrl: STATIC_ROOT + 'chat/dialogue_list.view.html',
+                    controllerAs: 'vm',
+                    parent: 'init',
+                    params: {'user_id': null}
+            })
+
+            .state('chat.dialogue',{
+                    url: '/messages/:user_id/',
+                    controller: 'ChatDialogueController',
+                    templateUrl: STATIC_ROOT + 'chat/dialogue.view.html',
+                    controllerAs: 'vm',
+                    parent: 'init'
+            })
+        ;
+
+    }
+})();
+
