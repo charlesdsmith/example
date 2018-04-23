@@ -6,7 +6,7 @@ import os
 import re
 from itertools import izip #for iterating files in parallel
 
-cnx = mysql.connector.connect(user='root', password='gits2501',
+cnx = mysql.connector.connect(user='', password='',
 	host='localhost', database='chatbot')
 cursor = cnx.cursor()
 
