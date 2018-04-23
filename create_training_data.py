@@ -8,7 +8,7 @@ import codecs
 datasets = ['conversation_data']
 
 for dataset in datasets:
-	cnx = mysql.connector.connect(user='root', password='gits2501',
+	cnx = mysql.connector.connect(user='', password='',
 	host='localhost', database='chatbot')
 	cursor = cnx.cursor()
 
